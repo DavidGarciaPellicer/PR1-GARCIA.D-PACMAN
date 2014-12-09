@@ -21,6 +21,7 @@ namespace PacManv2
             this.width = asciiModel.GetLength(0);
             this.height = asciiModel.GetLength(0);
             hasChanged = false;
+            haEncontradoObstaculo = false;
         }
 
         //campos de respaldo con sus Propiedades. ***Falta comentarlas***
@@ -83,16 +84,32 @@ namespace PacManv2
             set { this.asciiModel = value; }
         }
 
+        private int inicialPosX;
+        public int InicialPosX
+        {
+            get { return this.inicialPosX; }
+ 
+        }
+        
+        private int inicialPosY;
+        public int InicialPosY
+        {
+            get { return this.inicialPosX; }
+      
+        }
+
+        public bool haEncontradoObstaculo;
+
         public void Mover(int deltaX, int deltaY)
         {
-            int inicialPosXPacMan = this.posX;
-            int inicialPosYPacMan = this.posY;
+            inicialPosX = this.posX;
+            inicialPosY = this.posY;
 
             //Rectangulo recObstaculo = new Rectangulo(modeloObstaculo.PlayerPosX, modeloObstaculo.PlayerPosY, modeloObstaculo.PlayerWidth, modeloObstaculo.PlayerHeight);
             //Rectangulo recPacMan = new Rectangulo(modeloPacMan.PlayerPosX, modeloPacMan.PlayerPosY, modeloPacMan.PlayerWidth, modeloPacMan.PlayerHeight); 
 
-            int nuevaPosX = inicialPosXPacMan + deltaX;
-            int nuevaPosY = inicialPosYPacMan + deltaY;
+            int nuevaPosX = inicialPosX + deltaX;
+            int nuevaPosY = inicialPosY + deltaY;
 
             this.posX = nuevaPosX;
             this.posY = nuevaPosY;
