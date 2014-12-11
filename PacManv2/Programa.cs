@@ -21,7 +21,7 @@ namespace PacManv2
          Problemas actualmente:
           -PacMan atraviesa los obstáculos en vez de hacer que se "choque" contra ellos
           -aún no he controlado excepciones que producen ArrayIndexOutOfBounds cuando PacMan se mueve por la matriz
-          //sss
+          
          */
 
         //variable con la que indicamos el tiempo al cual se irá actualizando nuestro juego
@@ -45,6 +45,8 @@ namespace PacManv2
 
        int inicioX = 0;
        int inicioY = 0;
+
+        
 
        static void Main()
        {
@@ -103,9 +105,10 @@ namespace PacManv2
            if (Win32API.IsKeyPressed(ConsoleKey.DownArrow)) deltaX = 1;
 
            if (deltaX != 0 || deltaY != 0)
-               pacMan.Mover(deltaX,deltaY);
-
-           dibujarMatriz(rellenarMatriz(matrizPantalla));
+           {
+               pacMan.Mover(deltaX, deltaY);
+               dibujarMatriz(rellenarMatriz(matrizPantalla));
+           }
        }
 
         private string[,] rellenarMatriz(string[,] matriz)
@@ -115,12 +118,18 @@ namespace PacManv2
             
             //primero volvemos a dejar matrizPantalla como estaba originalmente(solamente el tablero sin personajes)
             rellenarMatrizInicial();
-            //guardamos la matrizPantalla antes del movimiento, por si hay que volver a la posición inicial
-            matrizPantallaAnterior = guardarMatrizAnterior(matrizPantalla);
+          
 
             int posBolaX=0;
             int posBolaY=0;
-            bool haComidoBola = false;
+            bool haComidoBola = false;          
+                posBolaX = 0;
+
+                if (rellenarMatrizEncuentraObstaculo())
+                {
+                    pacMan.PosX = pacMan.InicialPosX;
+                    pacMan.PosY = pacMan.InicialPosY;
+                }
 
             //ahora ya recorremos la matrizPantalla y dibujamos a PacMan en las posiciones actualizadas
             for (int i = 0; i < width; i++)
@@ -133,34 +142,49 @@ namespace PacManv2
                         haComidoBola = true;
                         posBolaX=i + pacMan.PosX;
                         posBolaY=j + pacMan.PosY;
-
+                        matrizPantalla[posBolaX, posBolaY] = " ";
                     }
-                    //si se encuentra con algún obstáculo cambiamos el valor de encontrarObstaculo
-                    if (matrizPantalla[i + pacMan.PosX, j + pacMan.PosY] == "@")
-                        pacMan.haEncontradoObstaculo = true;
+              
                     //aquí falta controlar excepciones que se producen ya que i+pacMan.PosX ó j + pacMan.PosY
                     //producen desbordamiento en los índices de la matriz
+
+                    //comprobamos que las posiciones del modeloASCII no estan fuera de los rangos de los índices de su matriz 4x4
+                    if (inicioX < 4 && inicioY < 4)
+                    {
                         matrizPantalla[i + pacMan.PosX, j + pacMan.PosY] = pacMan.ASCIIModel[inicioY, inicioX];
                         inicioX++;
+                    }
                 }
                 inicioY++;
                 inicioX = 0;
             }
 
-            if (haComidoBola)
-                matrizPantalla[posBolaX, posBolaY] = " ";
-
             inicioY = 0;
             inicioX = 0;
 
-            //si encuentra un obstaculo devolvemos la matriz con la posiciones anteriores
-            if (pacMan.haEncontradoObstaculo)
-            {
-                 pacMan.PosX = pacMan.InicialPosX;
-                 pacMan.PosY = pacMan.InicialPosY;
-             return  matrizPantallaAnterior;
-            }
             return matrizPantalla;
+        }
+
+        private bool rellenarMatrizEncuentraObstaculo()
+        {
+
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    //si se encuentra con algún obstáculo cambiamos el valor de encontrarObstaculo
+                    if (matrizPantalla[i + pacMan.PosX, j + pacMan.PosY] == "@")
+                    {
+                        //si encuentra un obstaculo devolvemos la matriz con la posiciones anteriores
+                        return true;
+                        //matrizPantalla = guardarMatrizAnterior(matrizPantallaAnterior);
+                        //return matrizPantalla;
+                    }
+                }
+            }
+
+            return false;
+
         }
 
         //declara y rellena una matriz de 2 dimensiones  para dibujar el tablero del juego
@@ -247,17 +271,19 @@ namespace PacManv2
 
         string[,] guardarMatrizAnterior(string[,] matrizActual)
         {
-            string[,] matrizAnterior = new string[matrizActual.GetLength(0),matrizActual.GetLength(1)];
-            for (int i = 0; i < width; i++)
+   
+            string[,] guardaMatrizNueva = new string[matrizActual.GetLength(0),matrizActual.GetLength(1)];
+            for (int i = 0; i < matrizActual.GetLength(0); i++)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < matrizActual.GetLength(1); j++)
                 {
-                    matrizAnterior[i, j] = matrizActual[i, j];
+                    guardaMatrizNueva[i, j] = matrizActual[i, j];
                 }
 
             }
 
-            return matrizAnterior;
+            return guardaMatrizNueva;
+            
         }
     }
 }

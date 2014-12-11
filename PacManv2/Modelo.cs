@@ -94,7 +94,7 @@ namespace PacManv2
         private int inicialPosY;
         public int InicialPosY
         {
-            get { return this.inicialPosX; }
+            get { return this.inicialPosY; }
       
         }
 
