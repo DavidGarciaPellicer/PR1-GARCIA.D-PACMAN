@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PacManv2
+namespace Daw1.DavidG.PacManv2
 {
    public static class ASCIIModels
     {

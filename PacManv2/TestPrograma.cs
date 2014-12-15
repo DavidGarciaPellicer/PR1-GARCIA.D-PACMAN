@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Collections;
 
-namespace PacManv2
+namespace Daw1.DavidG.PacManv2
 {
     class TestPrograma
     {
         static void Main()
         {
             //variable con la que indicamos el tiempo al cual se irá actualizando nuestro juego
-            const int PeriodoTiempo = 30;
+            const int PeriodoTiempo = 40;
             bool repetirJuego = true;
 
             while (repetirJuego)
@@ -28,7 +28,7 @@ namespace PacManv2
 
                 //Mientras no se termine la partida continuamos en este bucle 
                 while (!programa.Exit) { }
-                //si la partida termina se muestran los créditos finales               
+                //si la partida termina se muestran los créditos finales y se destruyen los temporizadores              
                 actualizarJuego.Dispose();
                 dibujarJuego.Dispose();
                 repetirJuego = Programa.CreditosFinales(programa);

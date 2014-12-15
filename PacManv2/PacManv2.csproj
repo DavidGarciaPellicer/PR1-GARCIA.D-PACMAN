@@ -44,7 +44,9 @@
   <ItemGroup>
     <Compile Include="ASCIIModels.cs" />
     <Compile Include="Modelo.cs" />
-    <Compile Include="Programa.cs" />
+    <Compile Include="..\..\..\..\Desktop\Programa.cs">
+      <Link>Programa.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestPrograma.cs" />
     <Compile Include="Win32API.cs" />

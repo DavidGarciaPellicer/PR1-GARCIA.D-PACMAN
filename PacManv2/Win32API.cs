@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace PacManv2
+namespace Daw1.DavidG.PacManv2
 {
     static class Win32API
     {
