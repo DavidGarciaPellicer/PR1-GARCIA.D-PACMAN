@@ -12,3 +12,6 @@ cuando hay que repetir la partida que a veces falla.
 
 El desarrollo del juego funciona más o menos de manera correcta.
 
+Hoy Martes 16 de Diciembre he realizado algunos cambios para separar la presentación de la lógica del juego.
+No había acabado de asimilar el por qué los Console tenían que estar en esta capa de la vista.
+
