@@ -108,11 +108,14 @@ namespace Daw1.DavidG.PacManv2
             AñadirEnemigo(enemigo2);
             AñadirEnemigo(enemigo3);
 
+            //para controlar la posición de la bola que se coma PacMan
             int posBolaX = 0;
             int posBolaY = 0;
-
+            
+            //si el jugador encuentra algún obstáculo vuelve a su posición anterior
             VolverPosicionAnterior();
-
+            
+            //actualiza la posición del jugador y comprueba si hay alguna bola comida o no
             ActualizarPosiciones(ref posBolaX, ref posBolaY);
 
             //movemos a los fantasmas
@@ -183,7 +186,6 @@ namespace Daw1.DavidG.PacManv2
 
         private void VolverPosicionAnterior()
         {
-            //si el jugador encuentra algún obstáculo vuelve a su posición anterior
             if (EncontrarObstaculo(pacMan.PosX, pacMan.PosY, 0))
             {
                 pacMan.PosX = pacMan.InicialPosX;
