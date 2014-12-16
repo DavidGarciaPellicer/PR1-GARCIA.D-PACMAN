@@ -18,15 +18,15 @@ namespace Daw1.DavidG.PacManv2
         public bool Exit = false;
 
         //matriz donde vamos redibujando nuestro juego con todos sus elementos
-        static string[,] matrizPrincipal;
+        public static string[,] matrizPrincipal;
 
         //variable donde se guardará el número de bolas comidas por el jugador
-        int bolasComidas = 0;
+        public static int bolasComidas = 0;
 
         //controlamos si es un movimiento ha habido o no una bola comida
         static bool haComidoBola = false;
 
-        static int totalBolas = 26;
+        public const int totalBolas = 26;
 
         //vector donde se guardan las posiciones de las bolas comidas
         int[] posicionesBolasComidas = new int[totalBolas * 2];
@@ -50,15 +50,8 @@ namespace Daw1.DavidG.PacManv2
         int direccionMovimientoEnemigo3 = 1;
 
         public void Inicializar()
-        {
-            Console.Title = "Pac-Man ataca de nuevo";
-            Console.CursorVisible = false;
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WindowWidth = 71;
-            Console.WindowHeight = 51;
-
-            CreditosIniciales();
+        {            
+            
             //rellena la matriz del juego sin PacMan ni fantasmas
             RellenarMatrizInicial();
 
@@ -80,29 +73,7 @@ namespace Daw1.DavidG.PacManv2
             enemigo3 = new Modelo(40, 50, ASCIIModels.Phantom);
         }
 
-        public void DibujarMatriz()
-        {
-            Console.Clear();
-            Console.CursorTop = 0;
-            Console.CursorLeft = 0;
-
-            int numFilas = matrizPrincipal.GetLength(0);
-            int numCols = matrizPrincipal.GetLength(1);
-
-            for (int filas = 0; filas < numFilas; filas++)
-            {
-                //se almacena la fila en un vector de caracteres y se pinta la línea entera
-                var fila = new char[numCols];
-                for (int cols = 0; cols < numCols; cols++)
-                {
-                    fila[cols] = matrizPrincipal[filas, cols][0];
-                }
-                Console.Write(fila);
-
-                Console.CursorLeft = 0;
-                Console.CursorTop++;
-            }
-        }
+       
 
         //Actualizar el modelo segun las entradas del usuario mediante el teclado   
         public void Actualizar()
@@ -134,19 +105,25 @@ namespace Daw1.DavidG.PacManv2
             AñadirEnemigo(enemigo2);
             AñadirEnemigo(enemigo3);
 
-
             int posBolaX = 0;
             int posBolaY = 0;
 
-            posBolaX = 0;
+            VolverPosicionAnterior();
 
-            //si el jugador encuentra algún obstáculo vuelve a su posición anterior
-            if (EncontrarObstaculo(pacMan.PosX, pacMan.PosY, 0))
-            {
-                pacMan.PosX = pacMan.InicialPosX;
-                pacMan.PosY = pacMan.InicialPosY;
-            }
+            ActualizarPosiciones(ref posBolaX, ref posBolaY);
 
+            //movemos a los fantasmas
+            direccionMovimientoEnemigo1 = MoverEnemigos(enemigo1, direccionMovimientoEnemigo1);
+            direccionMovimientoEnemigo2 = MoverEnemigos(enemigo2, direccionMovimientoEnemigo2);
+            direccionMovimientoEnemigo3 = MoverEnemigos(enemigo3, direccionMovimientoEnemigo3);
+
+            //si alguno de los enemigos choca con nuestro jugador la partida termina
+            if (Modelo.Intersecta(pacMan, enemigo1) || Modelo.Intersecta(pacMan, enemigo2) || Modelo.Intersecta(pacMan, enemigo3)) Exit = true;
+
+        }
+
+        private void ActualizarPosiciones(ref int posBolaX, ref int posBolaY)
+        {
             //ahora ya recorremos la matrizPantalla y dibujamos a PacMan en las posiciones actualizadas
             for (int filas = 0; filas < width; filas++)
             {
@@ -199,121 +176,19 @@ namespace Daw1.DavidG.PacManv2
             inicioYASCII = 0;
             inicioXASCII = 0;
             haComidoBola = false;
-
-            //movemos a los fantasmas
-            direccionMovimientoEnemigo1 = MoverEnemigos(enemigo1, direccionMovimientoEnemigo1);
-            direccionMovimientoEnemigo2 = MoverEnemigos(enemigo2, direccionMovimientoEnemigo2);
-            direccionMovimientoEnemigo3 = MoverEnemigos(enemigo3, direccionMovimientoEnemigo3);
-
-            //si alguno de los enemigos choca con nuestro jugador la partida termina
-            if (Modelo.Intersecta(pacMan, enemigo1) || Modelo.Intersecta(pacMan, enemigo2) || Modelo.Intersecta(pacMan, enemigo3)) Exit = true;
-
         }
 
-        public static void CreditosIniciales()
+        private void VolverPosicionAnterior()
         {
-
-            string[] titulo = new string[] {
-                    @" _____   ______   _ _ _          _    _   ______   _      _     ",
-                    @"|  _  | |  __  | |  _ _|        | \  / | |  __  | | \    | |    ",
-                    @"| |_| | | |__| | | |     _ _ _  |  \/  | | |__| | |  \   | |    ",
-                    @"|  _ _| |  __  | | |    |_ _ _| | |\/| | |  __  | | |\ \ | |    ",
-                    @"| |     | |  | | | |_ _         | |  | | | |  | | | | \ \| |    ",
-                    @"|_|     |_|  |_| |_ _ _|        |_|  |_| |_|  |_| |_|  \_ _|    ",
-                    @"                                                                ",
-                    @"                                        by Poni Developments    ",
-                    @"                                                                ",
-                    @"                                                                ",
-                    @"                                                                ",
-                    @"                     Pulsa enter para comenzar                  "};
-
-
-            //Dibuja el rótulo centrado en la pantalla y arriba
-            DibujarModeloASCII(
-                (Console.WindowWidth - titulo[0].Length) / 2,
-                3, titulo);
-            Console.Read();
+            //si el jugador encuentra algún obstáculo vuelve a su posición anterior
+            if (EncontrarObstaculo(pacMan.PosX, pacMan.PosY, 0))
+            {
+                pacMan.PosX = pacMan.InicialPosX;
+                pacMan.PosY = pacMan.InicialPosY;
+            }
         }
 
-        public static bool CreditosFinales(Programa programa)
-        {
-            string[] creditosPerdedor = new string[] {
-
-                     @"  ________    _____      _____   ___________ ",  
-                     @" /  _____/   /  _  \    /     \ \_   _____/  ", 
-                     @"/   \  ___  /  /_\  \  /  \ /  \ |    __)_   ", 
-                     @"\    \_\  \/    |    \/    Y    \|        \  ", 
-                     @" \______  /\____|__  /\____|__  /_______  /  ", 
-                     @"        \/         \/         \/        \/   ", 
-                     @"  ____________   _________________________   ", 
-                     @"  \_____  \   \ /   /\_   _____/\______   \  ", 
-                     @"   /   |   \   Y   /  |    __)_  |       _/  ", 
-                     @"  /    |    \     /   |        \ |    |   \  ", 
-                     @"  \_______  /\___/   /_______  / |____|_  /  ", 
-                     @"          \/                 \/         \/   ",
-                     @"                                             ",
-                     @"                                             ",
-                     @"                                             ",
-                     @"                                            "};
-
-            string[] creditosGanador = new string[] {
-
-              @"                                       ", 
-              @" ,--.   ,--..-'),-----.  ,--. ,--.     ", 
-              @"  \  `.'  /( OO'  .-.  ' |  | |  |     ", 
-              @".-')     / /   |  | |  | |  | | .-')   ", 
-              @"OO  \   /  \_) |  |\|  | |  |_|( OO )  ", 
-              @"|   /  /\_   \ |  | |  | |  | | `-' /  ", 
-              @"`-./  /.__)   `'  '-'  '('  '-'(_.-'   ", 
-              @"  `--'          `-----'   `-----'      ",
-              @"   (`\ .-') /`            .-') _       ", 
-              @"    `.( OO ),'           ( OO ) )      ", 
-              @" ,--./  .--.  ,-.-') ,--./ ,--,'       ", 
-              @" |      |  |  |  |OO)|   \ |  |\       ", 
-              @" |  |   |  |, |  |  \|    \|  | )      ", 
-              @" |  |.'.|  |_)|  |(_/|  .     |/       ", 
-              @" |         | ,|  |_.'|  |\    |        ", 
-              @" |   ,'.   |(_|  |   |  | \   |        ", 
-              @" '--'   '--'  `--'   `--'  `--'        ",
-              @"                                       ", 
-              @"                                       ", 
-              @"                                       "};
-
-
-            Console.Clear();
-
-            //Dibuja el rótulo centrado en la pantalla y arriba  
-            //Si el número de Bolas Comidas coincide con el total de las bolas significa que el jugador ha ganado
-            //SI no es así, el jugador ha perdido y mostramos el ASCII correspondiente
-            if (programa.bolasComidas == totalBolas)
-            {
-                DibujarModeloASCII(
-                  (Console.WindowWidth - creditosGanador[0].Length) / 2,
-                  3, creditosGanador);
-            }
-            else
-            {
-                DibujarModeloASCII(
-                  (Console.WindowWidth - creditosPerdedor[0].Length) / 2,
-                  3, creditosPerdedor);
-            }
-
-            Console.CursorLeft = 0;
-            //se le pregunta al usuario si quiere volver a jugar. Cualquier opción fuera del sí lleva al cierre del juego
-            //no he conseguido implementar esto con un CursorKeyInfo y un ReadKey(), que hubiera sido lo suyo
-
-            Console.WriteLine("Quieres jugar otra partida? S/N (Haz tu elección y presiona ENTER)");
-            while (true)
-            {
-                string entradaTeclado = Console.ReadLine();
-                if (entradaTeclado == "s" || entradaTeclado == "S")
-                    return true;
-                else if (entradaTeclado == "n" || entradaTeclado == "N")
-                    return false;
-            }
-
-        }
-
+       
         private void AñadirEnemigo(Modelo enemigo)
         {
             for (int filas = 0; filas < enemigo.Height; filas++)
@@ -439,49 +314,6 @@ namespace Daw1.DavidG.PacManv2
             }
 
         }
-
-        //pinta el tablero
-
-        public void DibujarMatriz(string[,] matriz)
-        {
-            Console.Clear();
-            Console.CursorTop = 0;
-            Console.CursorLeft = 0;
-
-            int numFilas = matriz.GetLength(0);
-            int numCols = matriz.GetLength(1);
-
-            for (int filas = 0; filas < numFilas; filas++)
-            {
-
-                var fila = new char[numCols];
-                for (int cols = 0; cols < numCols; cols++)
-                {
-                    fila[cols] = matriz[filas, cols][0];
-                }
-                Console.Write(fila);
-
-                Console.CursorLeft = 0;
-                Console.CursorTop++;
-            }
-        }
-
-        static void DibujarModeloASCII(int x, int y, string[] asciiChars)
-        {
-            Console.Clear();
-            for (int i = 0; i < asciiChars.Length; i++)
-            {
-                DibujarLinea(x, y + i, asciiChars[i]);
-            }
-        }
-
-        //Dibujar una linea en posicion X,Y directamente en la pantalla
-        static void DibujarLinea(int x, int y, string line)
-        {
-            Console.SetCursorPosition(x, y);
-            Console.Write(line);
-        }
-
-
+        
     }
 }
