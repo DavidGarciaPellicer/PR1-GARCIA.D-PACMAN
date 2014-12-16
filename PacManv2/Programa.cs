@@ -23,23 +23,26 @@ namespace Daw1.DavidG.PacManv2
         //variable donde se guardará el número de bolas comidas por el jugador
         public static int bolasComidas = 0;
 
-        //controlamos si es un movimiento ha habido o no una bola comida
+        //controlamos si en un movimiento ha habido o no una bola comida
         static bool haComidoBola = false;
-
+        //número de bolas en el juego
         public const int totalBolas = 26;
 
         //vector donde se guardan las posiciones de las bolas comidas
         int[] posicionesBolasComidas = new int[totalBolas * 2];
-
+        
+        //se declaran las variables del jugador y algunos campos de instancia para manejar sus propiedades
         Modelo pacMan;
         int width;
         int height;
         int posX;
         int posY;
-
+        
+        //para las posiciones de los modelosASCII
         int inicioXASCII = 0;
         int inicioYASCII = 0;
-
+        
+        //variables para el modelo de los fantasmas
         Modelo enemigo1;
         Modelo enemigo2;
         Modelo enemigo3;
