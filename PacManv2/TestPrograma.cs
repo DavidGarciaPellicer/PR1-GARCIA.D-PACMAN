@@ -92,6 +92,8 @@ namespace Daw1.DavidG.PacManv2
 
         }
 
+//3 argumentos de entrada. El primero la posición en x donde se dibujará en consola, el segundo marca la línea
+//o posición en y. El tercero para decir qué modeloASCII dibujamos 
         static void DibujarModeloASCII(int x, int y, string[] asciiChars)
         {
             Console.Clear();
